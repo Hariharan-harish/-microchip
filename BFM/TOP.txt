@@ -1,0 +1,11 @@
+`include "bfm.sv"
+module top;
+  int pkt_count=5;
+  int cs=1;
+  bfm pk;
+  initial begin
+    pk=new();
+   pk.packet_generation(cs,pkt_count);
+    pk.transmit();
+  end
+endmodule

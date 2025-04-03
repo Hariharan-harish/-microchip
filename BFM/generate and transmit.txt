@@ -1,0 +1,39 @@
+class bfm;
+  rand bit [31:0] data;
+  bit [31:0]q[$];
+  event data_done;
+  bfm pkt;
+task packet_generation(int cs,int pc);
+  if(cs)begin
+    $display("Data generation by random method");
+    for(int i=0;i<pc;i++)begin
+      pkt=new();
+      assert(pkt.randomize());
+          $display("generated data=%h",pkt.data);
+      q.push_back(pkt.data);
+    //  $display("q data=%h",q[$]);
+    end 
+     ->>data_done;
+       $display("data_done is triggered");
+  end
+  else begin
+  $display("Data generation by direct method");
+     for(int i = 0; i < pc; i++) begin
+       pkt=new();
+      pkt.data = pkt.data + i; 
+       $display("generated data=%h",pkt.data);
+       q.push_back(pkt.data);
+       //$display("q data=%h",q[$]);    
+      
+  end
+     ->>data_done;
+       $display("data_done is triggered");
+  end
+  endtask
+  task transmit();
+    $display("waiting for data_done triggering");
+    @data_done
+    $display("queue copy =%p",q);
+    $display("scoreboard copy =%p",q);
+  endtask
+endclass
