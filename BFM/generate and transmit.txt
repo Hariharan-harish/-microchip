@@ -1,9 +1,12 @@
+//`include "testbench.sv"
 class bfm;
   rand bit [31:0] data;
-  bit [31:0]q[$];
+  bit [31:0]q[$],q1[$];
   event data_done;
   bfm pkt;
-task packet_generation(int cs,int pc);
+  task packet_generation(int cs,int pc);
+    q={};//clears the queue after each interation
+    $display("pc=%0d",pc);
   if(cs)begin
     $display("Data generation by random method");
     for(int i=0;i<pc;i++)begin
@@ -11,7 +14,7 @@ task packet_generation(int cs,int pc);
       assert(pkt.randomize());
           $display("generated data=%h",pkt.data);
       q.push_back(pkt.data);
-    //  $display("q data=%h",q[$]);
+      
     end 
      ->>data_done;
        $display("data_done is triggered");
@@ -22,9 +25,7 @@ task packet_generation(int cs,int pc);
        pkt=new();
       pkt.data = pkt.data + i; 
        $display("generated data=%h",pkt.data);
-       q.push_back(pkt.data);
-       //$display("q data=%h",q[$]);    
-      
+       q.push_back(pkt.data);      
   end
      ->>data_done;
        $display("data_done is triggered");
@@ -33,7 +34,18 @@ task packet_generation(int cs,int pc);
   task transmit();
     $display("waiting for data_done triggering");
     @data_done
+    $display("Data done recevied");
+    q1=q;
+    // q1.push_back(100);//to check mismatch conditon
+    $display("q1=%p",q1);
+    $display("comparing the data's");
     $display("queue copy =%p",q);
     $display("scoreboard copy =%p",q);
+       if(q1==q)
+      $display("Data matched");
+    else
+      $display("Data mismatch occurred");
+    $display("q size =%0d",q.size());
+      $display("q1 size=%0d",q1.size());
   endtask
 endclass

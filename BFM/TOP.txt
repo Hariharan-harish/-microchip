@@ -1,11 +1,21 @@
 `include "bfm.sv"
 module top;
-  int pkt_count=5;
+  
+  class packet;
+ rand int pkt_count;
+  constraint pkt_count_c{pkt_count inside {[1:100]};}
+  endclass
+  
   int cs=1;
   bfm pk;
+  packet p;
   initial begin
     pk=new();
-   pk.packet_generation(cs,pkt_count);
+    p=new();
+    repeat(5)begin
+      p.randomize();
+      pk.packet_generation(cs,p.pkt_count);
     pk.transmit();
+  end
   end
 endmodule
