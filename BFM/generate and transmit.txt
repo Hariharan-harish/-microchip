@@ -3,7 +3,7 @@ class bfm;
   rand bit [31:0] data;
   bit [31:0]q[$],q1[$];
   event data_done;
-  bfm pkt
+  bfm pkt;
   task packet_generation(int cs,int pc);
     q={};//clears the queue after each interation
     $display("pc=%0d",pc);
